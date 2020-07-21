@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HarvestStars/gopool/protocol"
+	"github.com/HarvestStars/YuePaoTalent/protocol"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
@@ -21,5 +21,5 @@ func Setup(user string, pwd string, host string, db string) {
 		panic("failed to connect database")
 	}
 	DataBase.DB().SetConnMaxLifetime(2 * 3600 * time.Second) // 2小时空闲链接超时
-	DataBase.AutoMigrate(&protocol.MinerInfo{}, &protocol.BlockMined{}, &protocol.LiquidInfo{}, &protocol.LiquidHeight{})
+	DataBase.AutoMigrate(&protocol.UserInfo{})
 }

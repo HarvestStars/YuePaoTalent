@@ -13,6 +13,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// ClientIPs 客户端ip组,登录后记录在缓存中
+var ClientIPs map[string]bool
+
 const (
 	// Time allowed to write a message to the peer.
 	writeWait = 10 * time.Second

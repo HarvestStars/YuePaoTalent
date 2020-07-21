@@ -15,8 +15,8 @@ func main() {
 	hub = server.NewHub()
 	go hub.Run()
 	r := gin.Default()
-	r.GET("/regist", Register)
-	r.GET("/login", LogIn)
+	r.POST("/signup", SignUp)
+	r.POST("/login", LogIn)
 	r.GET("/chat", StartChat)
 	r.Run(":8080")
 }
