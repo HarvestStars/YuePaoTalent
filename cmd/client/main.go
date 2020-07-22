@@ -19,41 +19,34 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var addr = flag.String("addr", "47.101.72.50:8080", "http service address")
 var user string
+var ServerHost string
 
 func main() {
+	for k, v := range os.Args {
+		if k == 0 {
+			continue
+		}
+		ServerHost = v
+		break
+	}
+	//var addr = flag.String("addr", ServerHost, "http service address")
 	// 登录 or 注册
-	fmt.Print("signup or login? type in (S) for signup, (L) for login. \n")
-	signOrLog := bufio.NewReader(os.Stdin)
-	signflag, _ := signOrLog.ReadString('\r')
-	signflag = strings.Replace(signflag, "\r", "", -1)
-	if signflag == "S" {
-		// 注册
-		var req protocol.UserReq
-		req.UserName, req.PassWord = typeInScreen()
-		user = req.UserName
-		b, _ := json.Marshal(&req)
-		resp, err := http.Post("http://127.0.0.1:8080/signup", "application/json", bytes.NewBuffer(b))
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer resp.Body.Close()
-		bytes, _ := ioutil.ReadAll(resp.Body)
-		var res protocol.UserResp
-		json.Unmarshal(bytes, &res)
-		if res.Code == 200 {
-			fmt.Print(res.Data)
-		}
-
-	} else {
-		if signflag == "L" {
-			// 登录
-
-		} else {
-			fmt.Print("你输入的值为：" + signflag)
-			return
-		}
+	var req protocol.UserReq
+	req.UserName, req.PassWord = typeInScreen()
+	user = req.UserName
+	b, _ := json.Marshal(&req)
+	resp, err := http.Post("http://"+ServerHost+"/login", "application/json", bytes.NewBuffer(b))
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+	bytes, _ := ioutil.ReadAll(resp.Body)
+	var res protocol.UserResp
+	json.Unmarshal(bytes, &res)
+	fmt.Print(res.Data + "\n")
+	if res.Code == 400 {
+		return
 	}
 
 	// 开始聊天
@@ -62,7 +55,7 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
-	u := url.URL{Scheme: "ws", Host: *addr, Path: "/chat"}
+	u := url.URL{Scheme: "ws", Host: ServerHost, Path: "/chat"}
 	log.Printf("connecting to %s", u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
