@@ -18,5 +18,5 @@ func main() {
 	r := gin.Default()
 	r.POST("/login", LogIn)
 	r.GET("/chat", StartChat)
-	r.Run(conf.MySQLSetting.Host)
+	r.Run(conf.ServerSetting.Host)
 }
