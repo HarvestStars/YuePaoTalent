@@ -45,6 +45,7 @@ func StartChat(c *gin.Context) {
 	if _, ok := server.ClientIPs[ip]; !ok {
 		// 未登录
 		c.JSON(http.StatusBadRequest, gin.H{"code": 400, "data": "", "error": "未登录，请先登录"})
+		return
 	}
 	server.ServeWs(hub, c.Writer, c.Request)
 }
